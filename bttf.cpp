@@ -53,4 +53,13 @@ namespace bttf {
         });
         std::cout << "FluxCapacitorArray sorted." << std::endl;
     }
+
+    void deleteFluxCapacitorArray(FluxCapacitor** array, unsigned int n) {
+        for(int i = 0; i < n; i++) {
+            delete[] array[i]->c_string;
+            delete array[i];
+        }
+        delete[] array;
+        std::cout << "Deleted Fluxcapacitors!" << std::endl;
+    }
 }

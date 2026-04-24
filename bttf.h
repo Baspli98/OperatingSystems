@@ -13,7 +13,7 @@ namespace bttf {
     FluxCapacitor** createFluxCapacitorArray(unsigned int n);
     void printFluxCapacitorArray(FluxCapacitor** array, unsigned int n);
     void bubbleSortFluxCapacitorArray(FluxCapacitor** array, unsigned int n);
-    //void deleteFluxCapacitorArray(FluxCapacitor** array, unsigned int n);
+    void deleteFluxCapacitorArray(FluxCapacitor** array, unsigned int n);
 }
 
 #endif // BTTF_H

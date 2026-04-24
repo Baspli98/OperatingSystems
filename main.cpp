@@ -22,5 +22,6 @@ void doAssignment_1(bool doit) {
         bttf::printFluxCapacitorArray(array, fc_amount);
         bttf::bubbleSortFluxCapacitorArray(array, fc_amount);
         bttf::printFluxCapacitorArray(array, fc_amount);
+        bttf::deleteFluxCapacitorArray(array, fc_amount);
     }
 }
