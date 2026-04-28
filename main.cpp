@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <pthread.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 using namespace std;
 
@@ -94,7 +96,29 @@ void doAssignment_2(bool doit) {
         pthread_join(t1, nullptr);
         pthread_join(t2, nullptr);
 
-        std::cout << delorean__->current_power_level_in_mega_watts << std::endl;
+        std::cout << "Current Power Level (Mega Watt): " << delorean__->current_power_level_in_mega_watts << std::endl;
+
+        //Fork - I do not get why we have to set it in the child process.
+        pid_t pid = fork();
+        if(pid == 0) {
+            if(delorean__->current_power_level_in_mega_watts == 1210) {
+                delorean__->speed_in_kmh = 144.1;
+                std::cout << "Child: 1.21GW achieved!" << std::endl;
+            }
+            _exit(0);
+        } else {
+            wait(nullptr);
+            std::cout << "Parent: Child finished" << std::endl;
+        }
+
+        std::cout << "Final Speed: " << delorean__->speed_in_kmh << std::endl;
+
+        bttf::deleteFluxCapacitorArray(capacitors__, capacitorAmount);
+
+        delete[]c1->cap_indices;
+        delete[]c2->cap_indices;
+
+        delete delorean__;
 
         pthread_mutex_destroy(&mutex);
     }
