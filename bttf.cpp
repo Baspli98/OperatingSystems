@@ -3,6 +3,8 @@
 #include <ctime>
 #include "sort.h"
 
+extern pthread_mutex_t mutex;
+
 namespace bttf {
     FluxCapacitor* createFluxCapacitor() {
         FluxCapacitor* fc = new FluxCapacitor;
@@ -93,5 +95,40 @@ namespace bttf {
         }
         delete[] array;
         std::cout << "Deleted Fluxcapacitors!" << std::endl;
+    }
+
+    DeLorean* createDeLorean() {
+        DeLorean* d = new bttf::DeLorean;
+        d->current_power_level_in_mega_watts = 0;
+        d->speed_in_kmh = 0;
+        std::cout << "Created DeLorean!" << std::endl;
+        return d;
+    }
+
+    void deleteDeLorean(DeLorean* d) {
+        delete d;
+        std::cout << "Deleted DeLorean!" << std::endl;
+    }
+
+    extern DeLorean* delorean__;
+    extern FluxCapacitor** capacitors__;
+
+    void* assembleDeLorean(void *indices_) {
+        pthread_mutex_lock(&mutex);
+
+        container::IndexContainer* idx = static_cast<container::IndexContainer*>(indices_);
+        unsigned int sum = 0;
+
+        for (int i = 0; i < idx->array_length; i++) {
+            //std::cout << idx->cap_indices[i] << std::endl;
+            sum += capacitors__[idx->cap_indices[i]]->value;
+        }
+
+        delorean__->current_power_level_in_mega_watts += sum;
+
+        std::cout << "Thread sum added: " << sum << std::endl;
+
+        pthread_mutex_unlock(&mutex);
+        return nullptr;
     }
 }
