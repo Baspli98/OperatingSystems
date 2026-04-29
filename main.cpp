@@ -12,8 +12,9 @@ using namespace std;
 void doAssignment_1(bool doit);
 void doAssignment_2(bool doit);
 
-struct bttf::DeLorean* delorean__;
-struct bttf::FluxCapacitor** capacitors__;
+//Global Variables Assignment 2
+struct bttf::DeLorean* bttf::delorean__;
+struct bttf::FluxCapacitor** bttf::capacitors__;
 
 pthread_mutex_t mutex;
 
@@ -37,25 +38,6 @@ void doAssignment_1(bool doit) {
     }
 }
 
-void* assembleDeLorean(void *indices_) {
-    pthread_mutex_lock(&mutex);
-
-    container::IndexContainer* idx = static_cast<container::IndexContainer*>(indices_);
-    unsigned int sum = 0;
-
-    for (int i = 0; i < idx->array_length; i++) {
-        //std::cout << idx->cap_indices[i] << std::endl;
-        sum += capacitors__[idx->cap_indices[i]]->value;
-    }
-
-    delorean__->current_power_level_in_mega_watts += sum;
-
-    std::cout << "Thread sum added: " << sum << std::endl;
-
-    pthread_mutex_unlock(&mutex);
-    return nullptr;
-}
-
 void doAssignment_2(bool doit) {
     if(doit) {
         pthread_mutex_init(&mutex, nullptr);
@@ -63,36 +45,30 @@ void doAssignment_2(bool doit) {
         unsigned int capacitorAmount = 121;
         unsigned int capacitorValue = 10;
 
-        capacitors__ = bttf::createFluxCapacitorArray(capacitorAmount, capacitorValue);
-        //bttf::printFluxCapacitorArray(capacitors__, capacitorAmount);
-        delorean__ = new bttf::DeLorean;
-        delorean__->current_power_level_in_mega_watts = 0;
-        delorean__->speed_in_kmh = 0;
+        bttf::capacitors__ = bttf::createFluxCapacitorArray(capacitorAmount, capacitorValue);
+        bttf::delorean__ = bttf::createDeLorean();
 
         auto c1 = container::createIndexContainer(21, 21);
         auto c2 = container::createIndexContainer(100, 100, c1);
 
-        //Function Call one Thread
-        //assembleDeLorean(c1);
-        //assembleDeLorean(c2);
-
         //Threads
         pthread_t t1, t2;
 
-        pthread_create(&t1, nullptr, assembleDeLorean, c1);
-        pthread_create(&t2, nullptr, assembleDeLorean, c2);
+        pthread_create(&t1, nullptr, bttf::assembleDeLorean, c1);
+        pthread_create(&t2, nullptr, bttf::assembleDeLorean, c2);
 
         pthread_join(t1, nullptr);
         pthread_join(t2, nullptr);
 
-        std::cout << "Current Power Level (Mega Watt): " << delorean__->current_power_level_in_mega_watts << std::endl;
+        std::cout << "Current Power Level (Mega Watt): " << bttf::delorean__->current_power_level_in_mega_watts << std::endl;
 
-        //Fork - I do not get why we have to set it in the child process.
+        //Fork
         pid_t pid = fork();
         if(pid == 0) {
-            if(delorean__->current_power_level_in_mega_watts == 1210) {
-                delorean__->speed_in_kmh = 144.1;
+            if(bttf::delorean__->current_power_level_in_mega_watts == 1210) {
+                bttf::delorean__->speed_in_kmh = 144.1;
                 std::cout << "Child: 1.21GW achieved!" << std::endl;
+                std::cout << "Final Speed: " << bttf::delorean__->speed_in_kmh << std::endl;
             }
             _exit(0);
         } else {
@@ -100,14 +76,12 @@ void doAssignment_2(bool doit) {
             std::cout << "Parent: Child finished" << std::endl;
         }
 
-        std::cout << "Final Speed: " << delorean__->speed_in_kmh << std::endl;
-
-        bttf::deleteFluxCapacitorArray(capacitors__, capacitorAmount);
+        bttf::deleteFluxCapacitorArray(bttf::capacitors__, capacitorAmount);
 
         container::deleteIndexContainer(c1);
         container::deleteIndexContainer(c2);
 
-        delete delorean__;
+        bttf::deleteDeLorean(bttf::delorean__);
 
         pthread_mutex_destroy(&mutex);
     }
