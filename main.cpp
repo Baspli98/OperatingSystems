@@ -69,19 +69,8 @@ void doAssignment_2(bool doit) {
         delorean__->current_power_level_in_mega_watts = 0;
         delorean__->speed_in_kmh = 0;
 
-        //Create IndexContainer
-        auto c1 = new container::IndexContainer;
-        c1->array_length = 21;
-        c1->cap_indices = new unsigned int[21];
-        for (int i = 0; i < c1->array_length; i++) {
-            c1->cap_indices[i] = i;
-        }
-        auto c2 = new container::IndexContainer;
-        c2->array_length = 100;
-        c2->cap_indices = new unsigned int[100];
-        for (int i = 0; i < c2->array_length; i++) {
-            c2->cap_indices[i] = i + 21;
-        }
+        auto c1 = container::createIndexContainer(21, 21);
+        auto c2 = container::createIndexContainer(100, 100, c1);
 
         //Function Call one Thread
         //assembleDeLorean(c1);
@@ -115,8 +104,8 @@ void doAssignment_2(bool doit) {
 
         bttf::deleteFluxCapacitorArray(capacitors__, capacitorAmount);
 
-        delete[]c1->cap_indices;
-        delete[]c2->cap_indices;
+        container::deleteIndexContainer(c1);
+        container::deleteIndexContainer(c2);
 
         delete delorean__;
 
