@@ -41,14 +41,16 @@ namespace mem {
         unsigned char frame_attributes;
     };
 
-    void printSystemInfo() {
-        std::cout << "Page size: " << PAGE_SIZE << " bytes" << std::endl;
-        std::cout << "Physical memory size: " << PHYSICAL_MEMORY_SIZE << " bytes" << std::endl;
-        std::cout << "Virtual memory size: " << VIRTUAL_MEMORY_SIZE << " bytes" << std::endl;
-        std::cout << "Number of pages: " << NUM_PAGES << std::endl;
-        std::cout << "Number of page frames: " << NUM_PAGE_FRAMES << std::endl;
-        std::cout << "Page frame size: " << PAGE_FRAME_SIZE << " bytes" << std::endl;
-    }
+    struct Process {
+        unsigned char process_id;
+        struct mem::PageTable* page_table;
+    };
+
+    void printSystemInfo();
+    PageTable* createPageTable();
+    TLB* createTLB(unsigned int size);
+    Process* createProcess(unsigned char id);
+
 }
 
 #endif // MEM_H

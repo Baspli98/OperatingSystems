@@ -14,7 +14,9 @@ add_executable(OperatingSystems main.cpp
     container.cpp
     ed209.h
     mem.h
-    process.h
+
+    mem.cpp
+
 
 
 )
