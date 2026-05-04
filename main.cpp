@@ -6,11 +6,13 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "mem.h"
 
 using namespace std;
 
 void doAssignment_1(bool doit);
 void doAssignment_2(bool doit);
+void doAssignment_3(bool doit);
 
 //Global Variables Assignment 2
 struct bttf::DeLorean* bttf::delorean__;
@@ -21,7 +23,8 @@ pthread_mutex_t mutex;
 int main()
 {
     doAssignment_1(false);
-    doAssignment_2(true);
+    doAssignment_2(false);
+    doAssignment_3(true);
     cout << "---------That's all folks!---------" << endl;
     return 0;
 }
@@ -85,4 +88,8 @@ void doAssignment_2(bool doit) {
 
         pthread_mutex_destroy(&mutex);
     }
+}
+
+void doAssignment_3(bool doit) {
+    mem::printSystemInfo();
 }

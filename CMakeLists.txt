@@ -12,6 +12,10 @@ add_executable(OperatingSystems main.cpp
     sort.h
     container.h
     container.cpp
+    ed209.h
+    mem.h
+    process.h
+
 
 )
 
