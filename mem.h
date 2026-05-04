@@ -15,6 +15,9 @@ namespace mem {
 
     constexpr unsigned int PAGE_FRAME_SIZE = PAGE_SIZE;
 
+    constexpr unsigned char FRAME_TLB        = 1 << 0; // 00000001
+    constexpr unsigned char FRAME_REFERENCED = 1 << 1; // 00000010
+
     struct MMU {
         struct TLB* tlb;
         struct Process* process;
@@ -50,6 +53,7 @@ namespace mem {
     PageTable* createPageTable();
     TLB* createTLB(unsigned int size);
     Process* createProcess(unsigned char id);
+    unsigned int countTLBEntries(struct Process* p);
 
 }
 

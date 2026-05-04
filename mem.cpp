@@ -47,4 +47,14 @@ namespace mem {
 
         return p;
     }
+
+    unsigned int countTLBEntries(struct Process* p) {
+        int count = 0;
+        for (int i = 0; i < p->page_table->size; i++) {
+            if(p->page_table->entries[i]->frame_attributes & FRAME_TLB) {
+                count += 1;
+            }
+        }
+        return count;
+    }
 }
