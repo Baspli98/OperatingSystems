@@ -70,4 +70,27 @@ namespace mem {
             }
         }
     }
+
+    unsigned int translate(unsigned int virtual_address, struct PageTable* pt) {
+        //Virtual address contains 24 bits split into Page Index 14 bits and Offset 10 bits
+        unsigned int page_index = virtual_address >> 10;
+        unsigned int offset = virtual_address & 1023;
+        //010010101101001101010101
+        //000000000000001111111111 = 1023
+
+        //Use Page Index to search pt for the frame
+        auto entry = pt->entries[page_index];
+        //Sidequest - Set Flags
+        entry->frame_attributes |= FRAME_TLB;
+        entry->frame_attributes |= FRAME_REFERENCED;
+
+        auto frame = entry->page_frame_index;
+
+        //Glue frame + offset
+        unsigned int physical = (frame << 10) | offset;
+        //01010110010000000000
+                  //1101001010
+
+        return physical;
+    }
 }
