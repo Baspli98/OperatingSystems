@@ -93,4 +93,24 @@ namespace mem {
 
         return physical;
     }
+
+    int preprocessInstructions(struct MMU* mmu, unsigned int* instructions, unsigned int instruction_count) {
+        if(!mmu || !instructions || instruction_count == 0)
+            return -1;
+
+        Process* p = mmu->process;
+        PageTable* pt = p->page_table;
+
+        for (int i = 0; i < instruction_count; i++) {
+            translate(instructions[i], pt);
+        }
+
+        unsigned int count = countTLBEntries(p);
+        if(count == 0)
+            return -1;
+
+        copyTLBEntries(p, mmu->tlb);
+
+        return 0;
+    }
 }

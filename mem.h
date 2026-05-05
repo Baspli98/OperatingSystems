@@ -56,7 +56,7 @@ namespace mem {
     unsigned int countTLBEntries(struct Process* p);
     void copyTLBEntries(struct Process* p, struct TLB* tlb);
     unsigned int translate(unsigned int virtual_address, struct PageTable* pt);
-
+    int preprocessInstructions(struct MMU* mmu, unsigned int* instructions, unsigned int instruction_count);
 }
 
 #endif // MEM_H
