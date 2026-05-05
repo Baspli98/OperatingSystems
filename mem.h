@@ -29,9 +29,9 @@ namespace mem {
     };
 
     struct TLBEntry {
-        unsigned int page_index;
-        unsigned int page_frame_index;
-        unsigned char frame_attributes;
+        unsigned int page_index; //24 bit from virtual
+        unsigned int page_frame_index; //20 bit from physical
+        unsigned char frame_attributes; //8 bit
     };
 
     struct PageTable {
@@ -46,7 +46,7 @@ namespace mem {
 
     struct Process {
         unsigned char process_id;
-        struct mem::PageTable* page_table;
+        struct PageTable* page_table;
     };
 
     void printSystemInfo();
@@ -54,6 +54,8 @@ namespace mem {
     TLB* createTLB(unsigned int size);
     Process* createProcess(unsigned char id);
     unsigned int countTLBEntries(struct Process* p);
+    void copyTLBEntries(struct Process* p, struct TLB* tlb);
+    unsigned int translate(unsigned int virtual_address, struct PageTable* pt);
 
 }
 

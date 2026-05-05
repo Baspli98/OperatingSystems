@@ -57,4 +57,17 @@ namespace mem {
         }
         return count;
     }
+
+    void copyTLBEntries(struct Process* p, struct TLB* tlb) {
+        int tlbIndex = 0;
+        for (int i = 0; i < p->page_table->size; i++) {
+            if(p->page_table->entries[i]->frame_attributes & FRAME_TLB) {
+
+                tlb->entries[tlbIndex]->page_index = i; //I do not understand that yet
+                tlb->entries[tlbIndex]->page_frame_index = p->page_table->entries[i]->page_frame_index;
+                tlb->entries[tlbIndex]->frame_attributes = p->page_table->entries[i]->frame_attributes;
+                tlbIndex += 1;
+            }
+        }
+    }
 }
