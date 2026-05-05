@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include "mem.h"
+#include "ed209.h"
 
 using namespace std;
 
@@ -92,4 +93,23 @@ void doAssignment_2(bool doit) {
 
 void doAssignment_3(bool doit) {
     mem::printSystemInfo();
+    unsigned int edSimulation[5] = {0xBDDE10, 0x5FFFE, 0x54AC01, 0x540C, 0xFFFFE}; //instructions
+    rbt::ED_209* ed = new rbt::ED_209;
+    mem::MMU* mmu = new mem::MMU;
+    mmu->tlb = mem::createTLB(5);
+    mmu->process = mem::createProcess(1);
+
+    ed->mmu = mmu;
+
+    auto pt = ed->mmu->process->page_table;
+    //Calculate Page Index from Instruction
+    //Put them in Instruction order
+    pt->entries[0x2f77]->page_frame_index   = 0x0;
+    pt->entries[0x17f]->page_frame_index    = 0x1;
+    pt->entries[0x152b]->page_frame_index   = 0x2;
+    pt->entries[0x15]->page_frame_index     = 0x3;
+    pt->entries[0x3ff]->page_frame_index    = 0x4;
+
+    mem::preprocessInstructions(ed->mmu, edSimulation, 5);
+    rbt::startED209(ed);
 }

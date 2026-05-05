@@ -3,9 +3,13 @@
 
 #include "mem.h"
 
-struct ED_209
-{
-    struct mem::MMU* mmu;
-};
+namespace rbt {
+    struct ED_209
+    {
+        struct mem::MMU* mmu;
+    };
+
+    void startED209(struct ED_209* ed);
+}
 
 #endif // ED2_9_H

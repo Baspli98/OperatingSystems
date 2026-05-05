@@ -1,0 +1,21 @@
+#include "ed209.h"
+
+namespace rbt {
+    void startED209(struct ED_209* ed) {
+        //check if mmu contains a tlb with the valid instructions
+
+        if (ed->mmu->tlb->entries[0]->page_frame_index == 0x3 && ed->mmu->tlb->entries[0]->page_index == 0x15 &&
+            ed->mmu->tlb->entries[1]->page_frame_index == 0x1 && ed->mmu->tlb->entries[1]->page_index == 0x17f &&
+            ed->mmu->tlb->entries[2]->page_frame_index == 0x4 && ed->mmu->tlb->entries[2]->page_index == 0x3ff &&
+            ed->mmu->tlb->entries[3]->page_frame_index == 0x2 && ed->mmu->tlb->entries[3]->page_index == 0x152b &&
+            ed->mmu->tlb->entries[4]->page_frame_index == 0x0 && ed->mmu->tlb->entries[4]->page_index == 0x2f77)
+        {
+            printf("ED-209 is working within normal parameters -> SIMULATION SUCCEEDED\n");
+
+        }
+        else
+        {
+            printf("ERROR: ED-209 is out of control -> SIMULATION FAILED\n");
+        }
+    }
+}
