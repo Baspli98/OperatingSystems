@@ -40,4 +40,63 @@ namespace fs {
         return freeBlocks * pFat->blockSize;
     }
 
+    struct BsFile* createFile(struct BsFat* pFat,
+                              int szFile,
+                              char* fileName,
+                              bool readOnly,
+                              bool hidden) {
+        int fileIndex = -1;
+
+        for (int i = 0; i < FILE_SPACE; i++) {
+            if (pFat->files[i].fileName[0] == '\0') {
+                fileIndex = i;
+                break;
+            }
+        }
+
+        if (fileIndex == -1) {
+            return nullptr;
+        }
+
+        int neededBlocks = (szFile + pFat->blockSize -1) / pFat->blockSize;
+
+        int freeBlocks = 0;
+        if (freeBlocks < getFreeDiskSpace(pFat)) {
+            return nullptr;
+        }
+
+        BsFile* file = &pFat->files[fileIndex];
+        std::strcpy(file->fileName, fileName);
+        file->fileSize = szFile;
+        file->readOnly = readOnly;
+        file->hidden = hidden;
+
+        file->firstCluster = nullptr;
+        BsCluster* lastCluster = nullptr;
+
+        for (int i = 0; i < neededBlocks; i++) {
+            int rndBlock;
+            do {
+                rndBlock = rand() % pFat->blockCount;
+            } while (pFat->blocks[rndBlock].state != FREE);
+
+            pFat->blocks[rndBlock].state = OCCUPIED;
+            pFat->blocks[rndBlock].fileIndex = fileIndex;
+
+            BsCluster* cluster = new BsCluster;
+            cluster->blockIndex = rndBlock;
+            cluster->next = nullptr;
+            cluster->prev = lastCluster;
+
+            if (lastCluster != nullptr) {
+                lastCluster->next = cluster;
+            } else {
+                file->firstCluster = cluster;
+            }
+            lastCluster = cluster;
+        }
+
+        return file;
+    }
+
 }

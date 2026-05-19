@@ -1,6 +1,9 @@
 #ifndef FS_H
 #define FS_H
 
+#include <cstdlib>
+#include <cstring>
+
 namespace fs {
 
     constexpr unsigned int FILE_SPACE = 10;
@@ -46,6 +49,7 @@ namespace fs {
 
     struct BsFat* createBsFat(int diskSize, int blockSize);
     int getFreeDiskSpace(struct BsFat* pFat);
+    struct BsFile* createFile(struct BsFat* pFat, int szFile, char* fileName, bool readOnly, bool hidden);
 
 }
 
