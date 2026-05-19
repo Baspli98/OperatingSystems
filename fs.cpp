@@ -99,4 +99,37 @@ namespace fs {
         return file;
     }
 
+    void deleteFile(struct BsFat* pFat, char* fileName) {
+        int fileIndex = -1;
+
+        for (int i = 0; i < FILE_SPACE; i++) {
+            if (std::strcmp(pFat->files[i].fileName, fileName) == 0) {
+                fileIndex = i;
+                break;
+            }
+        }
+
+        if (fileIndex == -1) {
+            return;
+        }
+
+        BsFile* file = &pFat->files[fileIndex];
+        BsCluster* current = file->firstCluster;
+
+        while (current != nullptr) {
+            int block = current->blockIndex;
+            pFat->blocks[block].state = FREE;
+            pFat->blocks[block].fileIndex = -1;
+
+            BsCluster* next = current->next;
+            delete current;
+            current = next;
+        }
+
+        file->fileName[0] = '\0';
+        file->fileSize = 0;
+        file->readOnly = false;
+        file->hidden = false;
+        file->firstCluster = nullptr;
+    }
 }
