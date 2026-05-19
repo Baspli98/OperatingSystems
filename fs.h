@@ -51,7 +51,7 @@ namespace fs {
     int getFreeDiskSpace(struct BsFat* pFat);
     struct BsFile* createFile(struct BsFat* pFat, int szFile, char* fileName, bool readOnly, bool hidden);
     void deleteFile(struct BsFat* pFat, char* fileName);
-
+    float getFragmentation(struct BsFat* pFat);
 }
 
 #endif // FS_H

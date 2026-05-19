@@ -132,4 +132,36 @@ namespace fs {
         file->hidden = false;
         file->firstCluster = nullptr;
     }
+
+    float getFragmentation(struct BsFat* pFat) {
+        int fragmented = 0;
+        int totalTransitions = 0;
+
+        for (int i = 0; i < FILE_SPACE; i++) {
+            BsFile* file = &pFat->files[i];
+            if (file->fileName[0] == '/0') {
+                continue;
+            }
+
+            BsCluster* current = file->firstCluster;
+
+            while (current != nullptr && current->next != nullptr) {
+                totalTransitions++;
+
+                int currentBlock = current->blockIndex;
+                int nextBlock = current->next->blockIndex;
+
+                if (nextBlock != currentBlock + 1) {
+                    fragmented++;
+                }
+                current = current->next;
+            }
+        }
+
+        if (totalTransitions == 0) {
+            return 0.0f;
+        }
+
+        return (fragmented * 100.0f) / totalTransitions;
+    }
 }
