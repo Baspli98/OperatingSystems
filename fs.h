@@ -2,6 +2,9 @@
 #define FS_H
 
 namespace fs {
+
+    constexpr unsigned int FILE_SPACE = 10;
+
     enum BlockStatus {
         RESERVED,
         DEFECT,
@@ -11,6 +14,24 @@ namespace fs {
 
     struct BsBlock {
         BlockStatus state;
+        int fileIndex;
+    };
+
+    struct BsCluster {
+        int blockIndex;
+
+        BsCluster* next;
+        BsCluster* prev;
+    };
+
+    struct BsFile {
+        char fileName[13]; //8.3 format
+
+        int fileSize;
+        bool readOnly;
+        bool hidden;
+
+        BsCluster* firstCluster;
     };
 
     struct BsFat {
@@ -19,13 +40,8 @@ namespace fs {
         int blockCount;
 
         BsBlock* blocks;
-    };
 
-    struct BsCluster {
-        int blockIndex;
-
-        BsCluster* next;
-        BsCluster* prev;
+        BsFile files[FILE_SPACE];
     };
 
     struct BsFat* createBsFat(int diskSize, int blockSize);
