@@ -28,4 +28,16 @@ namespace fs {
         return fat;
     }
 
+    int getFreeDiskSpace(struct BsFat* pFat) {
+        int freeBlocks = 0;
+
+        for (int i = 0; i < pFat->blockCount; i++) {
+            if(pFat->blocks[i].state == FREE) {
+                freeBlocks++;
+            }
+        }
+
+        return freeBlocks * pFat->blockSize;
+    }
+
 }

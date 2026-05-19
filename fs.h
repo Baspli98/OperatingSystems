@@ -45,6 +45,7 @@ namespace fs {
     };
 
     struct BsFat* createBsFat(int diskSize, int blockSize);
+    int getFreeDiskSpace(struct BsFat* pFat);
 
 }
 
