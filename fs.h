@@ -52,8 +52,8 @@ namespace fs {
 
     struct BsFat* createBsFat(int diskSize, int blockSize);
     int getFreeDiskSpace(struct BsFat* pFat);
-    struct BsFile* createFile(struct BsFat* pFat, int szFile, char* fileName, bool readOnly, bool hidden);
-    void deleteFile(struct BsFat* pFat, char* fileName);
+    struct BsFile* createFile(struct BsFat* pFat, int szFile, const char* fileName, bool readOnly, bool hidden);
+    void deleteFile(struct BsFat* pFat, const char* fileName);
     float getFragmentation(struct BsFat* pFat);
     void showFat(struct BsFat* pFat);
     void defragDisk(struct BsFat* pFat);

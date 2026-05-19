@@ -42,7 +42,7 @@ namespace fs {
 
     struct BsFile* createFile(struct BsFat* pFat,
                               int szFile,
-                              char* fileName,
+                              const char* fileName,
                               bool readOnly,
                               bool hidden) {
         int fileIndex = -1;
@@ -60,8 +60,7 @@ namespace fs {
 
         int neededBlocks = (szFile + pFat->blockSize -1) / pFat->blockSize;
 
-        int freeBlocks = 0;
-        if (freeBlocks < getFreeDiskSpace(pFat)) {
+        if (getFreeDiskSpace(pFat) < neededBlocks) {
             return nullptr;
         }
 
@@ -99,7 +98,7 @@ namespace fs {
         return file;
     }
 
-    void deleteFile(struct BsFat* pFat, char* fileName) {
+    void deleteFile(struct BsFat* pFat, const char* fileName) {
         int fileIndex = -1;
 
         for (int i = 0; i < FILE_SPACE; i++) {
@@ -171,12 +170,16 @@ namespace fs {
             switch (pFat->blocks[i].state) {
                 case RESERVED:
                     std::cout << "R";
+                    break;
                 case DEFECT:
                     std::cout << "D";
+                    break;
                 case FREE:
                     std::cout << "F";
+                    break;
                 case OCCUPIED:
                     std::cout << pFat->blocks[i].fileIndex;
+                    break;
             }
         }
         std::cout << "|";
