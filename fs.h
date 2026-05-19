@@ -20,7 +20,9 @@ namespace fs {
 
         BsBlock* blocks;
     };
-}
 
+    struct BsFat* createBsFat(int diskSize, int blockSize);
+
+}
 
 #endif // FS_H
