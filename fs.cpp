@@ -139,7 +139,7 @@ namespace fs {
 
         for (int i = 0; i < FILE_SPACE; i++) {
             BsFile* file = &pFat->files[i];
-            if (file->fileName[0] == '/0') {
+            if (file->fileName[0] == '\0') {
                 continue;
             }
 
@@ -180,5 +180,50 @@ namespace fs {
             }
         }
         std::cout << "|";
+    }
+
+    void defragDisk(struct BsFat* pFat) {
+        int targetBlock = 0;
+        for (int fileIndex = 0; fileIndex < FILE_SPACE; fileIndex++) {
+            BsFile* file = &pFat->files[fileIndex];
+            if (file->fileName[0] == '\0') {
+                continue;
+            }
+
+            std::cout << "Defragmenting file: " << file->fileName << std::endl;
+
+            BsCluster* current = file->firstCluster;
+
+            while (current != nullptr) {
+                while (targetBlock < pFat->blockCount &&
+                       pFat->blocks[targetBlock].state != FREE) {
+                    targetBlock++;
+                }
+
+                if (targetBlock >= pFat->blockCount) {
+                    return;
+                }
+
+                int oldBlock = current->blockIndex;
+                pFat->blocks[oldBlock].state = FREE;
+                pFat->blocks[oldBlock].fileIndex = -1;
+
+                pFat->blocks[targetBlock].state = OCCUPIED;
+                pFat->blocks[targetBlock].fileIndex = fileIndex;
+
+                current->blockIndex = targetBlock;
+
+                std::cout << "Moved Block " << oldBlock << " -> " << targetBlock << std::endl;
+
+                targetBlock++;
+
+                current = current->next;
+
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(300)
+                );
+            }
+        }
+        std::cout << "Defragmantation finished." << std::endl;
     }
 }

@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 namespace fs {
 
@@ -54,6 +56,7 @@ namespace fs {
     void deleteFile(struct BsFat* pFat, char* fileName);
     float getFragmentation(struct BsFat* pFat);
     void showFat(struct BsFat* pFat);
+    void defragDisk(struct BsFat* pFat);
 }
 
 #endif // FS_H
