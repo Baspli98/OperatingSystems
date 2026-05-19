@@ -164,4 +164,21 @@ namespace fs {
 
         return (fragmented * 100.0f) / totalTransitions;
     }
+
+    void showFat(struct BsFat* pFat) {
+        for (int i = 0; i < pFat->blockCount; i++) {
+            std::cout << "|";
+            switch (pFat->blocks[i].state) {
+                case RESERVED:
+                    std::cout << "R";
+                case DEFECT:
+                    std::cout << "D";
+                case FREE:
+                    std::cout << "F";
+                case OCCUPIED:
+                    std::cout << pFat->blocks[i].fileIndex;
+            }
+        }
+        std::cout << "|";
+    }
 }

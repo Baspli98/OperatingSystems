@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 namespace fs {
 
@@ -52,6 +53,7 @@ namespace fs {
     struct BsFile* createFile(struct BsFat* pFat, int szFile, char* fileName, bool readOnly, bool hidden);
     void deleteFile(struct BsFat* pFat, char* fileName);
     float getFragmentation(struct BsFat* pFat);
+    void showFat(struct BsFat* pFat);
 }
 
 #endif // FS_H
