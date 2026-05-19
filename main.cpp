@@ -8,12 +8,14 @@
 #include <sys/wait.h>
 #include "mem.h"
 #include "ed209.h"
+#include "fs.h"
 
 using namespace std;
 
 void doAssignment_1(bool doit);
 void doAssignment_2(bool doit);
 void doAssignment_3(bool doit);
+void doAssignment_4(bool doit);
 
 //Global Variables Assignment 2
 struct bttf::DeLorean* bttf::delorean__;
@@ -25,7 +27,8 @@ int main()
 {
     doAssignment_1(false);
     doAssignment_2(false);
-    doAssignment_3(true);
+    doAssignment_3(false);
+    doAssignment_4(true);
     cout << "---------That's all folks!---------" << endl;
     return 0;
 }
@@ -92,24 +95,95 @@ void doAssignment_2(bool doit) {
 }
 
 void doAssignment_3(bool doit) {
-    mem::printSystemInfo();
-    unsigned int edSimulation[5] = {0xBDDE10, 0x5FFFE, 0x54AC01, 0x540C, 0xFFFFE}; //instructions
-    rbt::ED_209* ed = new rbt::ED_209;
-    mem::MMU* mmu = new mem::MMU;
-    mmu->tlb = mem::createTLB(5);
-    mmu->process = mem::createProcess(1);
+    if (doit) {
+        mem::printSystemInfo();
+        unsigned int edSimulation[5] = {0xBDDE10, 0x5FFFE, 0x54AC01, 0x540C, 0xFFFFE}; //instructions
+        rbt::ED_209* ed = new rbt::ED_209;
+        mem::MMU* mmu = new mem::MMU;
+        mmu->tlb = mem::createTLB(5);
+        mmu->process = mem::createProcess(1);
 
-    ed->mmu = mmu;
+        ed->mmu = mmu;
 
-    auto pt = ed->mmu->process->page_table;
-    //Calculate Page Index from Instruction
-    //Put them in Instruction order
-    pt->entries[0x2f77]->page_frame_index   = 0x0;
-    pt->entries[0x17f]->page_frame_index    = 0x1;
-    pt->entries[0x152b]->page_frame_index   = 0x2;
-    pt->entries[0x15]->page_frame_index     = 0x3;
-    pt->entries[0x3ff]->page_frame_index    = 0x4;
+        auto pt = ed->mmu->process->page_table;
+        //Calculate Page Index from Instruction
+        //Put them in Instruction order
+        pt->entries[0x2f77]->page_frame_index   = 0x0;
+        pt->entries[0x17f]->page_frame_index    = 0x1;
+        pt->entries[0x152b]->page_frame_index   = 0x2;
+        pt->entries[0x15]->page_frame_index     = 0x3;
+        pt->entries[0x3ff]->page_frame_index    = 0x4;
 
-    mem::preprocessInstructions(ed->mmu, edSimulation, 5);
-    rbt::startED209(ed);
+        mem::preprocessInstructions(ed->mmu, edSimulation, 5);
+        rbt::startED209(ed);
+    }
+}
+
+void doAssignment_4(bool doit) {
+    if(doit) {
+        srand(time(nullptr));
+
+        fs::BsFat* fat = fs::createBsFat(8192, 512);
+
+        fat->blocks[0].state = fs::RESERVED;
+        fat->blocks[1].state = fs::RESERVED;
+
+        fat->blocks[5].state = fs::DEFECT;
+        fat->blocks[9].state = fs::DEFECT;
+
+        fs::createFile(
+            fat,
+            1200,
+            "FILE1.TXT",
+            false,
+            false
+        );
+
+        fs::createFile(
+            fat,
+            2000,
+            "FILE2.TXT",
+            false,
+            false
+        );
+
+        fs::createFile(
+            fat,
+            700,
+            "TEST.DAT",
+            false,
+            false
+        );
+
+        std::cout << "Initial FAT:" << std::endl;
+        fs::showFat(fat);
+
+        std::cout << "Fragmentation: " << fs::getFragmentation(fat) << "%" << std::endl;
+
+        fs::deleteFile(fat, "FILE2.TXT");
+
+        std::cout << "\nAfter delete:" << std::endl;
+        fs::showFat(fat);
+
+        fs::createFile(
+            fat,
+            1800,
+            "NEW.BIN",
+            false,
+            false
+        );
+
+        std::cout << "\nAfter new File:" << std::endl;
+        fs::showFat(fat);
+
+        std::cout << "Fragmentation: " << fs::getFragmentation(fat) << "%" << std::endl;
+
+        std::cout << "Starting defrag... " << std::endl;
+        fs::defragDisk(fat);
+
+        std::cout << "\nAfter defrag:" << std::endl;
+        fs::showFat(fat);
+
+        std::cout << "Fragmentation: " << fs::getFragmentation(fat) << "%" << std::endl;
+    }
 }

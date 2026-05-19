@@ -17,6 +17,8 @@ add_executable(OperatingSystems main.cpp
 
     mem.cpp
     ed209.cpp
+    fs.h
+    fs.cpp
 
 
 
