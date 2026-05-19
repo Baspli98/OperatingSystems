@@ -21,6 +21,13 @@ namespace fs {
         BsBlock* blocks;
     };
 
+    struct BsCluster {
+        int blockIndex;
+
+        BsCluster* next;
+        BsCluster* prev;
+    };
+
     struct BsFat* createBsFat(int diskSize, int blockSize);
 
 }
